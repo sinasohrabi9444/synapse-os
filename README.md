@@ -16,6 +16,7 @@ on the AI subscription you already pay for, drawn as a living map of your mind.
 ![Node 22](https://img.shields.io/badge/node-22-5fa04e)
 ![Platforms](https://img.shields.io/badge/runs%20on-macOS%20·%20Linux%20·%20Docker%20·%20any%20browser-555)
 ![Languages](https://img.shields.io/badge/UI-English%20·%20Persian%20(RTL)-f59e0b)
+![Bring your own brain](https://img.shields.io/badge/brain-your%20own%20Claude%20·%20Codex-e879f9)
 
 [Get started](#get-started) · [How it works](#how-it-works) · [Features](#features) · [Privacy](#privacy-and-security) · [FAQ](#faq) · [Contributing](#contributing)
 
@@ -28,6 +29,14 @@ on the AI subscription you already pay for, drawn as a living map of your mind.
 Synapse is an AI-native second brain and life OS. Your notes, ideas, tasks, projects, goals, habits, people and journal live as a folder of Markdown files on your own disk. You never have to sort them: you say what is on your mind — in a sentence, in Persian or English — and a brain files it as the right kind of item, links it to what it belongs to, and keeps the whole picture current. You see that picture as a living map, and every day the brain tells you what deserves your time.
 
 The brain is not a service we run. It is **your own AI subscription**: Synapse starts the official, unmodified command-line app you are already signed in to (Claude Code or OpenAI Codex) with your vault as its working folder. No API keys to buy, no account with us, and Synapse never sees your credentials.
+
+> [!IMPORTANT]
+> **Bring your own brain.** This repository ships **no AI access of any kind**: no API keys, no tokens, no shared account, no one else's subscription. Cloning it gives you the app, not a brain. To make it think you need **your own active subscription**:
+>
+> - **Claude** — a plan that includes Claude Code (for example Pro or Max), signed in to the Claude Code CLI on your machine, **or**
+> - **ChatGPT** — a plan that includes Codex (for example Plus or Pro), signed in to the Codex CLI on your machine.
+>
+> Every request goes from *your* computer, through *your* signed-in CLI, to *your* account. Nothing is billed to or routed through anyone else. Setup takes two minutes: [Activate your brain](#2-activate-your-brain).
 
 ## Why?
 
@@ -87,7 +96,56 @@ flowchart LR
 
 ## Get started
 
-You need **Node.js 22**, **pnpm 9** (`corepack enable`), **git**, and a brain: the [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) signed in once (`claude`, then `/login`), or the [Codex CLI](https://github.com/openai/codex) signed in with your ChatGPT account. API keys (Anthropic, OpenAI, OpenRouter) work too.
+### 1. Prerequisites
+
+| You need | Check | Get it |
+|---|---|---|
+| **Node.js 22+** | `node -v` | [nodejs.org](https://nodejs.org) |
+| **pnpm 9** | `pnpm -v` | `npm install -g pnpm@9` (or `corepack enable`) |
+| **git** | `git --version` | [git-scm.com](https://git-scm.com) |
+| **Your own Claude *or* ChatGPT subscription** | — | see step 2 |
+
+### 2. Activate your brain
+
+Pick one (or both, and switch per conversation). You sign in **inside the vendor's own CLI**, never inside Synapse.
+
+<table>
+<tr><th>Claude Code (recommended)</th><th>Codex</th></tr>
+<tr><td>
+
+```bash
+# install
+npm install -g @anthropic-ai/claude-code
+
+# sign in with YOUR Claude account
+claude          # then type /login
+
+# verify
+claude auth status
+```
+
+</td><td>
+
+```bash
+# install
+npm install -g @openai/codex
+
+# sign in with YOUR ChatGPT account
+codex login
+
+# verify
+codex login status
+```
+
+</td></tr>
+</table>
+
+No terminal handy? Start Synapse and use **Settings → Brain → Sign in**: it runs that same CLI's own sign-in and hands your one-time code straight to it. Either way the login lives in the CLI's own folder in your home directory, never in Synapse and never in this repository.
+
+> [!NOTE]
+> Prefer pay-as-you-go? Paste **your own** Anthropic, OpenAI or OpenRouter API key under Settings → Brain. It is stored only in your vault's private settings file, outside this repo.
+
+### 3. Run it
 
 | Way | Best for | Command |
 |---|---|---|
@@ -98,7 +156,7 @@ You need **Node.js 22**, **pnpm 9** (`corepack enable`), **git**, and a brain: t
 ### Try it from source
 
 ```bash
-git clone https://github.com/Mahdi-Ai-Agent/synapse-os.git && cd synapse-os
+git clone https://github.com/sinasohrabi9444/synapse-os.git && cd synapse-os
 pnpm install
 pnpm vault:seed          # a fresh vault with fictional sample data at ~/Synapse/vault
                          # (or: pnpm vault:create for an empty one; SYNAPSE_VAULT=... puts it elsewhere)
@@ -106,6 +164,22 @@ pnpm dev                 # open http://localhost:5173 (the server runs on :4317)
 ```
 
 `pnpm build && pnpm start` runs the same thing as one process at `http://127.0.0.1:4317`.
+
+On first open Synapse asks you to create the owner account with a **setup code** printed in the server's log (`setup code: XXXX-XXXX-XXXX`). Then open Settings → Brain: your signed-in CLI shows up as connected.
+
+### On Windows
+
+The server and web UI run natively on Windows 10/11 (PowerShell or Git Bash):
+
+```powershell
+npm install -g pnpm@9          # pnpm dev calls pnpm again, so it must be on PATH
+git clone https://github.com/sinasohrabi9444/synapse-os.git; cd synapse-os
+pnpm install
+pnpm vault:seed                # vault at %USERPROFILE%\Synapse\vault
+pnpm dev                       # http://localhost:5173
+```
+
+If you only have corepack, either run `corepack enable` once from an **Administrator** terminal, or start the two halves yourself: `corepack pnpm --filter @synapse/server dev` and `corepack pnpm --filter @synapse/web dev`.
 
 ### The Mac app
 
@@ -150,6 +224,17 @@ You pick the engine, the model and the effort per conversation. How each engine 
 - **Encrypted on the Mac.** An AES-256 encrypted APFS disk image whose random key is wrapped by your password (scrypt), by a recovery key, and optionally by Touch ID through the Keychain.
 - **A locked door on a server.** One owner account created with a setup code from the server log, rate-limited sign-in, sessions you can end, and OAuth consent for every connected AI app.
 - **The brain stays in its lane.** It runs with only file tools, no MCP servers, and a hook that refuses writes outside `nodes/` and `memory/`.
+
+### What is never in this repository
+
+| Thing | Where it actually lives |
+|---|---|
+| Claude / ChatGPT logins | the vendor CLI's own folder in **your** home directory (`~/.claude`, `~/.codex`) |
+| API keys you paste | your vault's private settings file (`~/Synapse/vault/.synapse/`) |
+| Environment overrides | `.env`, gitignored; only the empty `.env.example` is committed |
+| Your notes and memory | the vault, which always lives **outside** the repo |
+
+A fresh clone therefore carries nobody's account, usage or data, and nobody can run on yours.
 
 Found a vulnerability? Please report it privately — see [SECURITY.md](SECURITY.md).
 

@@ -50,7 +50,7 @@ The server must be able to reach the vendors (claude.com and api.anthropic.com, 
 Synapse can be an app on your Mac instead of a server: `Synapse.app`, with its own window and Dock icon and the server inside it. The server starts and stops with the app. The brain is whatever Claude Code or the ChatGPT app on the Mac is signed in to (Settings → Brain), and nothing leaves the Mac except what the brain sends its vendor.
 
 ```bash
-git clone https://github.com/Mahdi-Ai-Agent/synapse-os.git && cd synapse-os
+git clone https://github.com/sinasohrabi9444/synapse-os.git && cd synapse-os
 pnpm install
 pnpm mac:dmg     # → apps/desktop/release/Synapse-<version>-arm64.dmg (Apple silicon)
 ```
